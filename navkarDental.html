@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Navkar Dental Care Review</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React & ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- Babel -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slide-up {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .animate-fade-in {
+      animation: fade-in 0.5s ease-out;
+    }
+
+    .animate-slide-up {
+      animation: slide-up 0.5s ease-out;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0fdfa;
+    }
+
+    /* Teal-50 background */
+    #root {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+  </style>
+</head>
+
+<body class="bg-teal-50">
+  <div id="root">
+    <div style="height:100vh; display:flex; justify-content:center; align-items:center; color:#0d9488;">
+      Loading Navkar Dental Care...
+    </div>
+  </div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // --- CONFIGURATION ---
+    const SHOP_NAME = "Navkar Dental Care";
+    const GOOGLE_REVIEW_LINK = "https://search.google.com/local/writereview?placeid=ChIJLdAa3V71wjsRL2uCDQzYHnc";
+
+    // --- ICONS ---
+    const Tooth = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M4.2 18.2A9 9 0 0 1 2 9c0-3.9 3.1-7 7-7 1.8 0 3.3.6 4.6 1.6h.8C15.7 2.6 17.2 2 19 2c3.9 0 7 3.1 7 7a9 9 0 0 1-2.2 9.2l-6.8 3.8-1-5.7-4 0-1 5.7-6.8-3.8z" /></svg>
+    );
+    const Smile = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10" /><path d="M8 14s1.5 2 4 2 4-2 4-2" /><line x1="9" y1="9" x2="9.01" y2="9" /><line x1="15" y1="9" x2="15.01" y2="9" /></svg>
+    );
+    const Sparkles = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 3Z" /></svg>
+    );
+    const Star = ({ size = 24, fill = "none", className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+    );
+    const Check = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="20 6 9 17 4 12" /></svg>
+    );
+    const Copy = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>
+    );
+    const ChevronRight = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m9 18 6-6-6-6" /></svg>
+    );
+    const Activity = ({ size = 24, className = "" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
+    );
+
+    // --- MAIN APP ---
+    function App() {
+      const [step, setStep] = useState(1);
+      const [service, setService] = useState("");
+      const [generatedOptions, setGeneratedOptions] = useState([]);
+      const [copiedIndex, setCopiedIndex] = useState(null);
+
+      // --- LARGE DATABASE OF REVIEWS ---
+
+      // MARATHI REVIEWS (Minimum 10-15 per category to ensure variety)
+      const marathiReviews = {
+        "root canal": [
+          "नवकार डेंटल मध्ये माझी रूट कॅनल ट्रीटमेंट खूपच आरामात झाली. डॉक्टरांचे हात खूप हलके आहेत.",
+          "रूट कॅनल ट्रीटमेंटसाठी उत्तम ठिकाण. मला अजिबात त्रास झाला नाही. धन्यवाद!",
+          "डॉक्टरांनी खूप काळजीपूर्वक उपचार केले. आता माझा दात अजिबात दुखत नाही. उत्तम अनुभव.",
+          "मी खूप घाबरलो होतो पण डॉक्टरांनी मला खूप धीर दिला आणि वेदनामुक्त उपचार केले.",
+          "येथील टेक्नॉलॉजी खूप प्रगत आहे, त्यामुळे रूट कॅनल करताना काहीच त्रास होत नाही.",
+          "माझ्या दाताची ट्रीटमेंट खूप छान झाली. डॉक्टर खूप अनुभवी आहेत.",
+          "स्वच्छता आणि उपचार दोन्ही उत्कृष्ट. नक्की भेट द्या.",
+          "कमी खर्चात आणि चांगल्या प्रकारे रूट कॅनल झाले. आभार.",
+          "दुखण्यापासून पूर्ण सुटका मिळाली. नवकार डेंटल केअर बेस्ट आहे.",
+          "फास्ट आणि पेनलेस ट्रीटमेंट. 5 स्टार!"
+        ],
+        "cleaning": [
+          "दात स्वच्छ करण्यासाठी सर्वोत्तम दवाखाना. डॉक्टर खूप हुशार आहेत.",
+          "क्लिनिक खूप स्वच्छ आहे आणि ट्रीटमेंट खूप छान झाली. नक्की भेट द्या.",
+          "माझे दात आता पूर्णपणे स्वच्छ झाले आहेत. खूप छान सर्व्हिस.",
+          "दातांवरील डाग पूर्णपणे निघून गेले. खूप छान वाटत आहे.",
+          "अतिशय प्रोफेशनल सर्व्हिस. स्वच्छता वाखाणण्याजोगी आहे.",
+          "मी रेग्युलर चेकअप आणि क्लिनिंगसाठी नेहमी इथेच येतो. उत्तम अनुभव.",
+          "डॉक्टरांनी खूप काळजीपूर्वक दात साफ केले. धन्यवाद.",
+          "स्वस्त आणि मस्त ट्रीटमेंट. स्टाफ खूप चांगला आहे.",
+          "येथील वातावरण खूप प्रसन्न आहे. ट्रीटमेंट चांगली मिळाली."
+        ],
+        "checkup": [
+          "डॉक्टरांनी खूप चांगली माहिती दिली. क्लिनिक खूप स्वच्छ आहे.",
+          "नवकार डेंटल केअर मधील सर्व स्टाफ खूप चांगला आहे. योग्य सल्ला मिळाला.",
+          "येथील डॉक्टर खूप अनुभवी आहेत. खूप छान सर्व्हिस.",
+          "कोणताही अतिरिक्त खर्च सांगितला नाही. प्रामाणिक डॉक्टर.",
+          "माझ्या शंकांचे पूर्ण निरसन झाले. खूप समाधानी आहे.",
+          "डॉक्टरांचे बोलणे खूप मृदू आहे. भीती वाटत नाही.",
+          "फॅमिली डेंटिस्ट म्हणून उत्तम पर्याय.",
+          "वेळेवर अपॉयंटमेंट मिळाली आणि तपासणी छान झाली."
+        ],
+        "extraction": [
+          "दात काढताना अजिबात कळले नाही. डॉक्टर खूप छान आहेत.",
+          "खूपच कमी वेळात आणि वेदनामुक्त उपचार झाले. धन्यवाद डॉक्टर!",
+          "दाढ काढण्यासाठी हे सर्वोत्तम ठिकाण आहे. भीती वाटली नाही.",
+          "डॉक्टरांनी खूप आरामात दात काढला. काहीच त्रास झाला नाही.",
+          "इंजेक्शन देताना पण कळले नाही. इतके डॉक्टर कुशल आहेत.",
+          "काही मिनिटातच दात काढला. खूप फास्ट सर्व्हिस.",
+          "दुखऱ्या दातापासून सुटका मिळाली. आभार.",
+          "उत्तम अनुभव. अजिबात घाबरू नका."
+        ]
+      };
+
+      // ENGLISH REVIEWS (Massive pool for variety)
+      const englishReviews = {
+        "root canal": [
+          "I was nervous about my Root Canal, but the doctor at ${SHOP_NAME} was so gentle. It was completely painless!",
+          "Best place for Root Canal treatment. The procedure was smooth and the staff made me feel very comfortable.",
+          "Had a Root Canal at ${SHOP_NAME}. The doctor is very skilled. Didn't feel a thing. Highly recommended!",
+          "State-of-the-art clinic. My RCT was done quickly and efficiently. Zero pain afterwards.",
+          "Truly professional dental care. They saved my tooth with a perfect root canal procedure.",
+          "The doctor has magical hands! I didn't feel the injection or the root canal treatment. Amazing.",
+          "Affordable and high-quality root canal treatment. Very satisfied with the service.",
+          "Clean, hygienic, and painless. Everything you want in a dental clinic for RCT.",
+          "My tooth pain is gone forever thanks to the expert team at ${SHOP_NAME}.",
+          "Smooth experience from start to finish. The doctor explained every step of the RCT.",
+          "I highly recommend this clinic for anyone scared of root canals. They are very caring.",
+          "Fantastic service. The root canal cap fits perfectly and looks natural."
+        ],
+        "cleaning": [
+          "Just got my teeth cleaning done at ${SHOP_NAME}. My teeth feel amazing! The clinic is very clean.",
+          "Great experience for dental cleaning. Very gentle hand and professional service.",
+          "Visited for scaling/cleaning. Quick, affordable, and very hygienic service.",
+          "My smile looks so much brighter after the cleaning session. Thank you!",
+          "Removed all the stains from my teeth. Very happy with the results.",
+          "The doctor was very thorough with the cleaning. Highly recommend.",
+          "Best dental hygiene service in town. Staff is very polite.",
+          "Professional cleaning without any sensitivity issues later. 5 stars!",
+          "Sparkling clean teeth in just 20 minutes. Great job.",
+          "Very gentle cleaning process. Did not hurt my gums at all."
+        ],
+        "checkup": [
+          "Visited ${SHOP_NAME} for a routine checkup. The doctor explained everything clearly.",
+          "A very clean and professional clinic. The doctor gave me great advice for my dental health.",
+          "Had a great consultation. No unnecessary treatments suggested, very honest doctor.",
+          "The staff is welcoming and the doctor is very knowledgeable. Best checkup experience.",
+          "They use modern equipment for checkups. Felt very assured about my dental health.",
+          "Timely appointment and detailed diagnosis. Very professional.",
+          "Dr. is very patient and listens to all concerns. Highly recommended for checkups.",
+          "Great ambiance and skilled doctors. My go-to place for dental issues.",
+          "Family friendly clinic. Took my kids for a checkup and they loved it."
+        ],
+        "extraction": [
+          "Had a tooth extraction here. I was scared but the doctor was incredibly gentle. It was over before I knew it!",
+          "Very professional handling of my extraction case. Minimal pain and great post-care advice.",
+          "I didn't even realize when the tooth was pulled out. Painless extraction!",
+          "Came in with severe pain, left with relief. The extraction was super quick.",
+          "Best place for wisdom tooth removal. The recovery was very fast.",
+          "Dr. made sure I was numb and comfortable before starting. Excellent care.",
+          "Very skilled hands. The extraction area healed perfectly.",
+          "Emergency extraction handled beautifully. Thank you ${SHOP_NAME}."
+        ]
+      };
+
+      // --- LOGIC: PICK UNIQUE ITEMS ---
+      const getUniqueItems = (pool, count) => {
+        // Shuffle array using Fisher-Yates algorithm for true randomness
+        const shuffled = [...pool];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled.slice(0, count);
+      };
+
+      const generateDentalReviews = (serviceType) => {
+        // 1. Get 3 Unique Marathi Reviews
+        // If specific service not found in map, use 'checkup' as fallback
+        const mPool = marathiReviews[serviceType] || marathiReviews["checkup"];
+        const selectedMarathi = getUniqueItems(mPool, 3);
+
+        // 2. Get 3 Unique English Reviews
+        const ePool = englishReviews[serviceType] || englishReviews["checkup"];
+        const selectedEnglish = getUniqueItems(ePool, 3);
+
+        // 3. Combine and Shuffle them so languages are mixed (or keep separate if preferred)
+        // Here we interleave them: Mar, Eng, Mar, Eng...
+        const combined = [];
+        for (let i = 0; i < 3; i++) {
+          if (selectedMarathi[i]) combined.push(selectedMarathi[i]);
+          if (selectedEnglish[i]) combined.push(selectedEnglish[i].replace("${SHOP_NAME}", SHOP_NAME));
+        }
+
+        return combined;
+      };
+
+      const handleServiceSelect = (selected) => {
+        setService(selected);
+        setStep(2);
+
+        // Simulate "Thinking" delay
+        setTimeout(() => {
+          setGeneratedOptions(generateDentalReviews(selected));
+          setStep(3);
+        }, 1000);
+      };
+
+      const handleCopyAndRedirect = (text, index) => {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          setCopiedIndex(index);
+          setTimeout(() => {
+            window.open(GOOGLE_REVIEW_LINK, '_blank');
+          }, 1000);
+        } catch (err) {
+          alert("Please manually copy the text, then we will open Google Maps!");
+          window.open(GOOGLE_REVIEW_LINK, '_blank');
+        }
+        document.body.removeChild(textArea);
+      };
+
+      const handleReset = () => {
+        setStep(1);
+        setCopiedIndex(null);
+      };
+
+      return (
+        <div className="min-h-screen flex justify-center">
+          <div className="w-full max-w-md bg-white shadow-xl min-h-screen flex flex-col">
+
+            {/* Header */}
+            <header className="bg-teal-600 p-6 text-white rounded-b-3xl shadow-lg z-10 relative overflow-hidden">
+              <div className="absolute top-0 right-0 -mt-4 -mr-4 opacity-20">
+                <Tooth size={120} />
+              </div>
+              <h1 className="text-2xl font-bold flex items-center gap-2 relative z-10">
+                {SHOP_NAME}
+              </h1>
+              <p className="text-teal-100 text-sm mt-1 relative z-10">
+                Patient Feedback
+              </p>
+            </header>
+
+            <main className="flex-1 p-6 flex flex-col relative">
+
+              {/* STEP 1: Select Service */}
+              {step === 1 && (
+                <div className="animate-fade-in">
+                  <h2 className="text-xl font-semibold mb-2 text-slate-800">
+                    How was your treatment?
+                  </h2>
+                  <p className="text-slate-500 mb-6 text-sm">
+                    Select an option to generate your review.
+                  </p>
+
+                  <div className="grid grid-cols-1 gap-3">
+                    <ServiceButton icon={<Activity size={24} />} iconColor="text-teal-600 bg-teal-50" label="Root Canal Treatment" onClick={() => handleServiceSelect("root canal")} />
+                    <ServiceButton icon={<Sparkles size={24} />} iconColor="text-cyan-600 bg-cyan-50" label="Teeth Cleaning / Scaling" onClick={() => handleServiceSelect("cleaning")} />
+                    <ServiceButton icon={<Smile size={24} />} iconColor="text-emerald-600 bg-emerald-50" label="Routine Checkup" onClick={() => handleServiceSelect("checkup")} />
+                    <ServiceButton icon={<Tooth size={24} />} iconColor="text-rose-600 bg-rose-50" label="Tooth Pain / Extraction" onClick={() => handleServiceSelect("extraction")} />
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 2: Loading Animation */}
+              {step === 2 && (
+                <div className="flex-1 flex flex-col items-center justify-center text-center animate-fade-in">
+                  <div className="relative">
+                    <div className="w-16 h-16 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin mb-4"></div>
+                    <div className="absolute inset-0 flex items-center justify-center text-teal-600">
+                      <Tooth size={24} className="animate-pulse" />
+                    </div>
+                  </div>
+                  <h3 className="text-lg font-semibold text-slate-700">Writing your review...</h3>
+                  <p className="text-slate-400 text-sm mt-2">Crafting professional feedback.</p>
+                </div>
+              )}
+
+              {/* STEP 3: Choose Review */}
+              {step === 3 && (
+                <div className="animate-slide-up pb-20">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-semibold text-slate-800">
+                      Tap to Select
+                    </h2>
+                    <button onClick={handleReset} className="text-xs font-medium text-slate-400 hover:text-teal-600 uppercase tracking-wide">
+                      Back
+                    </button>
+                  </div>
+
+                  <p className="text-slate-500 text-xs mb-4 flex gap-2 items-center">
+                    <Check size={14} className="text-green-500" />
+                    Select one to copy & open Maps automatically.
+                  </p>
+
+                  <div className="space-y-4">
+                    {generatedOptions.map((text, idx) => (
+                      <div key={idx} className={`relative p-5 rounded-xl border-2 transition-all duration-300 shadow-sm ${copiedIndex === idx ? 'border-green-500 bg-green-50 transform scale-[1.02]' : 'border-slate-100 bg-white hover:border-teal-300 active:border-teal-500'}`}>
+                        {copiedIndex === idx && (
+                          <div className="absolute -top-3 -right-2 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md flex items-center gap-1 animate-bounce">
+                            <Check size={12} /> COPIED
+                          </div>
+                        )}
+                        <div className="flex gap-1 text-amber-400 mb-2">
+                          {[1, 2, 3, 4, 5].map(i => <Star key={i} size={14} fill="currentColor" />)}
+                          <span className="text-xs text-slate-400 ml-2 font-medium uppercase tracking-wide pt-0.5">
+                            {/* Detect language loosely based on Devanagari range for label */}
+                            {/[\u0900-\u097F]/.test(text) ? "Marathi" : "English"}
+                          </span>
+                        </div>
+                        <p className="text-slate-700 text-sm leading-relaxed mb-4">"{text}"</p>
+                        <button onClick={() => handleCopyAndRedirect(text, idx)} className={`w-full py-3 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 transition-colors ${copiedIndex === idx ? 'bg-green-500 text-white' : 'bg-slate-900 text-white hover:bg-teal-600 active:bg-teal-700'}`}>
+                          {copiedIndex === idx ? <>Opening Maps...</> : <><Copy size={16} /> Post This Review</>}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </main>
+            <footer className="p-4 text-center text-xs text-slate-400 border-t bg-teal-50">
+              Thank you for choosing Navkar Dental Care
+            </footer>
+          </div>
+        </div>
+      );
+    }
+
+    // Standard Service Button
+    function ServiceButton({ icon, label, onClick, iconColor }) {
+      return (
+        <button onClick={onClick} className="w-full p-4 bg-white border border-slate-200 rounded-xl flex items-center justify-between group hover:border-teal-500 hover:shadow-md transition-all active:scale-95">
+          <div className="flex items-center gap-4">
+            <div className={`p-3 rounded-lg transition-colors ${iconColor} group-hover:bg-teal-600 group-hover:text-white`}>
+              {icon}
+            </div>
+            <span className="font-semibold text-slate-700 text-lg">{label}</span>
+          </div>
+          <ChevronRight className="text-slate-300 group-hover:text-teal-500" />
+        </button>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+
+</html>
